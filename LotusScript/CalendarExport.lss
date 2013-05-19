@@ -1,0 +1,145 @@
+Sub Initialize
+	ExportCalendar
+End Sub
+
+Sub ExportCalendar
+	On Error Goto ErrorCatch
+	
+	Dim session As New NotesSession
+	Dim database As NotesDatabase
+	Dim collection As NotesDocumentCollection
+	
+	Set database = session.CurrentDatabase
+	Set collection = database.UnprocessedDocuments
+	
+	Dim dataLines As Variant
+	dataLines = BuildCalendarEntryLines(collection)
+	
+	WriteLinesToFile dataLines
+	
+	Exit Sub
+	
+ErrorCatch:
+	Error Err, Error & Chr(13) + "Module: " & Cstr(Getthreadinfo(1)) & ", Line: " & Cstr(Erl)
+	
+End Sub
+
+Function BuildCalendarEntryLines(collection As NotesDocumentCollection)
+	
+	Dim document As NotesDocument
+	Dim startDate As NotesDateTime
+	Dim endDate As NotesDateTime
+	
+	Redim lines(collection.Count) As String
+	
+	Set document = collection.GetFirstDocument
+	
+	Dim index As Integer
+	index = 0
+	
+	Print "Spreading Jaevner over your calendar entries..."
+	
+	While Not (document Is Nothing)
+		If (document.form(0) <> "Reply"  And  document.form(0) <> "Notice") Then
+			
+			If document.Repeats(0) = "1" Then
+				For i = 0 To Ubound(document.RepeatDates)
+					'Set startDate = New NotesDateTime(document.RepeatDates(i))
+					Set startDate = New NotesDateTime(document.StartDateTime(i))
+					Set endDate = GetEndDateForRepeatingEntry(i, startDate)
+					
+					lines(index) = BuildLine(document, startDate, endDate)
+				Next
+			Else
+				Set startDate = New NotesDateTime(document.StartDateTime(0))
+				Set endDate = New NotesDateTime(document.EndDateTime(0))
+				
+				lines(index) = BuildLine(document, startDate, endDate)
+			End If
+		End If
+		
+		Set document = collection.GetNextDocument(document)
+		index = index + 1
+	Wend
+	
+	BuildCalendarEntryLines = lines
+	
+End Function
+
+Function BuildLine(document As NotesDocument, startDate As NotesDateTime, endDate As NotesDateTime) As String
+	
+	Dim allDayEventFlag As String
+	allDayEventFlag = Not (document.AppointmentType(0) <> "2")
+	
+	Dim description As String
+	description = GetDescription(document)
+	
+	Dim dataLine As String
+	
+	dataLine = |"| + document.Subject(0) + |","| + startDate.DateOnly + |","| + startDate.TimeOnly + _
+	|","| + endDate.DateOnly + |","| + endDate.TimeOnly + |","| + allDayEventFlag +  |","| + document.location(0) + _
+	" " + document.ROOM(0) +|","| + description + |","| + document.UniversalID + |"|
+	
+	BuildLine = dataLine
+	
+End Function
+
+Function GetDescription(document As NotesDocument) As String
+	On Error Goto ErrorCatch	
+	
+	Dim rtitem As Variant
+	Set rtitem = document.GetFirstItem("Body")
+	GetDescription = rtitem.Abstract(5000,False,False)
+	
+	Exit Function
+	
+ErrorCatch:
+	GetDescription = ""
+	Resume Next
+End Function
+
+Function GetEndDateForRepeatingEntry(index As Variant, startDate As NotesDateTime) As NotesDateTime
+	On Error Goto ErrorCatch
+	
+	Dim endDate As NotesDateTime
+	
+	Set endDate = New NotesDateTime(document.RepeatEndDates(index))
+	
+	If endDate Is Nothing Then
+		Set endDate = New NotesDateTime(doc.EndDateTime(index))
+	End If
+	
+	If endDate Is Nothing Then
+		Set endDate = startDate
+	End If
+	
+	Set GetEndDateForRepeatingEntry = endDate
+	Exit Function
+	
+ErrorCatch:
+	Resume Next
+	
+End Function
+
+Sub WriteLinesToFile(lines As Variant)
+	
+	Print "Spreading Jaevner over a file on your hard drive..."
+	
+	Dim fileDate As String
+	fileDate = Format$(Date, "yyyyMMdd") & "-" & Format$(Time, "HHmm")
+	
+	Dim fileName As String
+	fileName = "C:\Temp\NotesCalendar-" + fileDate + ".csv"
+	
+	Dim fileIndex As Integer
+	fileIndex = Freefile()
+	
+	Open fileName For Output As fileIndex
+	
+	For i = 0 To Ubound(lines)
+		Print #fileIndex, lines(i)
+	Next
+	
+	Close outputFile
+	
+End Sub

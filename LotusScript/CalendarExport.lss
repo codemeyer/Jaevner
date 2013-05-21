@@ -1,3 +1,13 @@
+Option Public
+Option Explicit
+
+Const DAYS_TO_KEEP = 14
+Const EXPORT_PATH = "C:\Temp\JaevnerExport\"
+Const RUN_PROGRAM_AFTER_EXPORT = True
+Const START_PROGRAM_MINIMIZED = True
+
+Const PROGRAM_NAME = "jaevner.exe"
+
 Sub Initialize
 	ExportCalendar
 End Sub
@@ -15,7 +25,20 @@ Sub ExportCalendar
 	Dim dataLines As Variant
 	dataLines = BuildCalendarEntryLines(collection)
 	
-	WriteLinesToFile dataLines
+	Dim fileName As String
+	fileName = WriteLinesToFile(dataLines)
+	
+	If RUN_PROGRAM_AFTER_EXPORT Then
+		Dim window
+		If START_PROGRAM_MINIMIZED Then
+			window = 6
+		Else
+			window = 8
+		End If
+		
+		Dim result As Integer
+		result = Shell(EXPORT_PATH & PROGRAM_NAME & " " & fileName, window)
+	End If
 	
 	Exit Sub
 	
@@ -30,39 +53,76 @@ Function BuildCalendarEntryLines(collection As NotesDocumentCollection)
 	Dim startDate As NotesDateTime
 	Dim endDate As NotesDateTime
 	
-	Redim lines(collection.Count) As String
+	Redim lines(0) As String
+	
+	Dim count As Integer
+	count = 0
 	
 	Set document = collection.GetFirstDocument
 	
-	Dim index As Integer
-	index = 0
-	
 	Print "Spreading Jaevner over your calendar entries..."
 	
+	Dim i As Integer
+	
 	While Not (document Is Nothing)
-		If (document.form(0) <> "Reply"  And  document.form(0) <> "Notice") Then
+		For i = 0 To Ubound(document.RepeatDates)
+			Set startDate = New NotesDateTime(document.StartDateTime(i))
 			
 			If document.Repeats(0) = "1" Then
-				For i = 0 To Ubound(document.RepeatDates)
-					'Set startDate = New NotesDateTime(document.RepeatDates(i))
-					Set startDate = New NotesDateTime(document.StartDateTime(i))
-					Set endDate = GetEndDateForRepeatingEntry(i, startDate)
-					
-					lines(index) = BuildLine(document, startDate, endDate)
-				Next
+				Set endDate = GetEndDateForRepeatingEntry(document, i, startDate)
 			Else
-				Set startDate = New NotesDateTime(document.StartDateTime(0))
 				Set endDate = New NotesDateTime(document.EndDateTime(0))
-				
-				lines(index) = BuildLine(document, startDate, endDate)
 			End If
-		End If
+			
+			If TimeDifferenceInDays(startDate) < DAYS_TO_KEEP Then
+				Redim Preserve lines(count) As String					
+				lines(count) = BuildLine(document, startDate, endDate)
+				count = count + 1
+			End If
+		Next
 		
 		Set document = collection.GetNextDocument(document)
-		index = index + 1
 	Wend
 	
 	BuildCalendarEntryLines = lines
+	
+End Function
+
+Function GetEndDateForRepeatingEntry(document As NotesDocument, index As Variant, startDate As NotesDateTime) As NotesDateTime
+	On Error Goto ErrorCatch
+	
+	Dim endDate As NotesDateTime
+	
+	Set endDate = New NotesDateTime(document.RepeatEndDates(index))
+	
+	If endDate.DateOnly = "" Then
+		Set endDate = New NotesDateTime(document.EndDateTime(index))
+	End If
+	
+	If endDate.DateOnly = "" Then
+		Set endDate = startDate
+	End If
+	
+	Set GetEndDateForRepeatingEntry = endDate
+	Exit Function
+	
+ErrorCatch:
+	Resume Next
+	
+End Function
+
+Function TimeDifferenceInDays(compareDate As NotesDateTime)
+	
+	Dim timeNow As NotesDateTime
+	Set timeNow = New NotesDateTime(Now)
+	
+	Dim diffInSeconds
+	diffInSeconds = timeNow.TimeDifference(compareDate)
+	
+	Dim diffInDays
+	diffInDays = diffInSeconds / 60 / 60 / 24
+	
+	TimeDifferenceInDays = diffInDays
 	
 End Function
 
@@ -89,7 +149,7 @@ Function GetDescription(document As NotesDocument) As String
 	
 	Dim rtitem As Variant
 	Set rtitem = document.GetFirstItem("Body")
-	GetDescription = rtitem.Abstract(5000,False,False)
+	GetDescription = rtitem.Abstract(5000, False, False)
 	
 	Exit Function
 	
@@ -98,30 +158,7 @@ ErrorCatch:
 	Resume Next
 End Function
 
-Function GetEndDateForRepeatingEntry(index As Variant, startDate As NotesDateTime) As NotesDateTime
-	On Error Goto ErrorCatch
-	
-	Dim endDate As NotesDateTime
-	
-	Set endDate = New NotesDateTime(document.RepeatEndDates(index))
-	
-	If endDate Is Nothing Then
-		Set endDate = New NotesDateTime(doc.EndDateTime(index))
-	End If
-	
-	If endDate Is Nothing Then
-		Set endDate = startDate
-	End If
-	
-	Set GetEndDateForRepeatingEntry = endDate
-	Exit Function
-	
-ErrorCatch:
-	Resume Next
-	
-End Function
-
-Sub WriteLinesToFile(lines As Variant)
+Function WriteLinesToFile(lines As Variant) As String
 	
 	Print "Spreading Jaevner over a file on your hard drive..."
 	
@@ -129,17 +166,21 @@ Sub WriteLinesToFile(lines As Variant)
 	fileDate = Format$(Date, "yyyyMMdd") & "-" & Format$(Time, "HHmm")
 	
 	Dim fileName As String
-	fileName = "C:\Temp\NotesCalendar-" + fileDate + ".csv"
+	fileName = EXPORT_PATH & "NotesCalendar-" + fileDate + ".csv"
 	
 	Dim fileIndex As Integer
 	fileIndex = Freefile()
 	
 	Open fileName For Output As fileIndex
 	
+	Dim i As Integer
+	
 	For i = 0 To Ubound(lines)
 		Print #fileIndex, lines(i)
 	Next
 	
-	Close outputFile
+	Close fileIndex
 	
-End Sub
+	WriteLinesToFile = fileName
+	
+End Function

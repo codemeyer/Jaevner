@@ -40,36 +40,67 @@ namespace Jaevner.Core
         {
             foreach (JaevnerEntry entry in entries)
             {
-                InsertOrUpdate(entry);
+                if (_repository.EntryExists(entry.UniqueId))
+                {
+                    UpdateEntry(entry);
+                }
+                else
+                {
+                    InsertEntry(entry);
+                }
             }
         }
 
-        private void InsertOrUpdate(JaevnerEntry entry)
+        private void UpdateEntry(JaevnerEntry entry)
         {
-            if (_repository.EntryExists(entry.UniqueId))
+            try
             {
                 _repository.Update(entry);
-                OnEntryAction(new JaevnerEventArgs { Entry = entry, Action = EntryActionType.Updated });
+                OnEntryAction(new JaevnerEventArgs {Entry = entry, Action = EntryActionType.Updated});
             }
-            else
+            catch (Exception ex)
+            {
+                OnEntryException(new JaevnerExceptionEventArgs { Entry = entry, Action = EntryActionType.Inserted, Exception = ex });
+            }
+        }
+
+        private void InsertEntry(JaevnerEntry entry)
+        {
+            try
             {
                 _repository.Insert(entry);
                 OnEntryAction(new JaevnerEventArgs { Entry = entry, Action = EntryActionType.Inserted });
+            }
+            catch (Exception ex)
+            {
+                OnEntryException(new JaevnerExceptionEventArgs { Entry = entry, Action = EntryActionType.Inserted, Exception = ex});
             }
         }
 
 
         public event EntryActionEventHandler EntryAction;
 
-        protected virtual void OnEntryAction(JaevnerEventArgs args)
+        private void OnEntryAction(JaevnerEventArgs args)
         {
             if (EntryAction != null)
             {
                 EntryAction(this, args);
             }
         }
+
+        public event EntryExceptionEventHandler EntryException;
+
+        private void OnEntryException(JaevnerExceptionEventArgs args)
+        {
+            if (EntryException != null)
+            {
+                EntryException(this, args);
+            }
+        }
     }
 
     public delegate void EntryActionEventHandler(object sender, JaevnerEventArgs args);
+
+    public delegate void EntryExceptionEventHandler(object sender, JaevnerExceptionEventArgs args);
 
 }

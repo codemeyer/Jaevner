@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B1B99B
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jaevner.Tests.ConsoleApp", "Jaevner.Tests.ConsoleApp\Jaevner.Tests.ConsoleApp.csproj", "{97F8A93E-7014-4AE6-B6A1-612BF20DF538}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{4BE59A7D-ED3B-4AA6-9EE0-9871D20899CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BE59A7D-ED3B-4AA6-9EE0-9871D20899CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BE59A7D-ED3B-4AA6-9EE0-9871D20899CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97F8A93E-7014-4AE6-B6A1-612BF20DF538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97F8A93E-7014-4AE6-B6A1-612BF20DF538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97F8A93E-7014-4AE6-B6A1-612BF20DF538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97F8A93E-7014-4AE6-B6A1-612BF20DF538}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

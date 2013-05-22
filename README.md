@@ -52,9 +52,13 @@ However, only the path to the file containing calendar data is required. The oth
 ## Known issues
 
 * Some exported event descriptions are missing some blankspaces
-* All day events are not handled properly yet
 * Some encoding issues
-* There should be more error handling.
+
+
+## To-do
+
+* Move to v3 of the API
+* There should be more error handling
 * More/better documentation
 
 

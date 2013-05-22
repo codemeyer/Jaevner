@@ -38,6 +38,7 @@ namespace Jaevner.Core
         {
             var eventEntry = new EventEntry(entry.Title, entry.Description, entry.Location);
             var eventTimes = new When(entry.StartDateTime, entry.EndDateTime);
+            eventTimes.AllDay = entry.AllDayEvent;
             eventEntry.Times.Add(eventTimes);
 
             var extended = new ExtendedProperty();

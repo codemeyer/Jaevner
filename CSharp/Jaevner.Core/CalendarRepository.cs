@@ -89,6 +89,7 @@ namespace Jaevner.Core
             eventEntry.Title.Text = entry.Title;
             eventEntry.Times[0].StartTime = entry.StartDateTime;
             eventEntry.Times[0].EndTime = entry.EndDateTime;
+            eventEntry.Times[0].AllDay = entry.AllDayEvent;
             eventEntry.Locations[0].ValueString = entry.Location;
             calendarService.Update(eventEntry);
         }

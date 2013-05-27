@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
-using Jaevner.ConsoleApp;
 using Jaevner.Core;
 using Xunit;
 
-namespace Jaevner.Tests.ConsoleApp
+namespace Jaevner.Tests.Core
 {
     public class SettingsParserTests
     {
@@ -44,6 +43,34 @@ namespace Jaevner.Tests.ConsoleApp
             public void ReturnsDefaultNumberOfDaysToKeepIfNotSpecified()
             {
                 string[] args = new[] { @"C:\file.csv" };
+                string json =
+                    "{\"CalendarUrl\": \"http://jsonurl\", \"UserName\": \"jsonuser\",\"Password\": \"jsonpwd\",\"DaysToKeep\": \"\"}";
+
+                var parser = new SettingsParser();
+
+                SyncSettings settings = parser.GetSyncSettings(args, json);
+
+                settings.DaysToKeep.Should().Be(14);
+            }
+
+            [Fact]
+            public void ReturnsNumberOfDaysToKeepFromCommandLineIfNotSpecifiedInSettings()
+            {
+                string[] args = new[] { @"C:\file.csv", "77" };
+                string json =
+                    "{\"CalendarUrl\": \"http://jsonurl\", \"UserName\": \"jsonuser\",\"Password\": \"jsonpwd\",\"DaysToKeep\": \"\"}";
+
+                var parser = new SettingsParser();
+
+                SyncSettings settings = parser.GetSyncSettings(args, json);
+
+                settings.DaysToKeep.Should().Be(77);
+            }
+
+            [Fact]
+            public void ReturnsDefaultNumberOfDaysToKeepIfCommandLineArgumentIsInvalid()
+            {
+                string[] args = new[] { @"C:\file.csv", "abc" };
                 string json =
                     "{\"CalendarUrl\": \"http://jsonurl\", \"UserName\": \"jsonuser\",\"Password\": \"jsonpwd\",\"DaysToKeep\": \"\"}";
 

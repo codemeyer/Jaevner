@@ -1,4 +1,5 @@
 ﻿using System;
+using Jaevner.Core;
 
 namespace Jaevner.ConsoleApp
 {

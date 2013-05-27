@@ -34,19 +34,16 @@ The C# console application uses the Google GData API to communicate with Google 
 
 The .bat file in CSharp\Build will create a single Jaevner.exe file using ILRepack. You must have compiled the project in Release mode first though.
 
-Jaevner.exe can be called with up to five parameters:
+Jaevner.exe can be called with one or two command line parameters. They are:
 
-* The path to the file containing calendar data (--file)
-* Calendar URL (--calendarUrl)
-* User name (--user)
-* Password (--pwd)
-* Number of days to keep calendar data - older calendar entries will be deleted (--days)
+* The path to the file containing calendar data
+* Number of days to keep calendar data - older calendar entries will be deleted (optional, 14 days is used if omitted)
 
 Example:
 
-    Jaevner.exe --file=c:\temp\whatever.csv --calendarUrl=https://www.google.com/calendar/feeds/yourcalendarusername@gmail.com/public/full --user=your.username@gmail.com --pwd=yoUrP4ssw0rd --days=14
+    Jaevner.exe c:\temp\whatever.csv 30
 
-However, only the path to the file containing calendar data is required. The other settings can be read from the settings file. If you only specify the path to the calendar file you can omit the "--file=" part.
+The other settings are specified in the settings.json file. They are the URL to the calendar, your user name and password. You can also specify the number of days to keep data.
 
 
 ## Known issues

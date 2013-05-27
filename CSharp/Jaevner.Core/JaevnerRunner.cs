@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Jaevner.Core;
 
-namespace Jaevner.ConsoleApp
+namespace Jaevner.Core
 {
     public class JaevnerRunner
     {

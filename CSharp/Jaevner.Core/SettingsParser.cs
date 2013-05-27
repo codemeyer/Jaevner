@@ -1,5 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Jaevner.Core
 {
@@ -11,19 +10,12 @@ namespace Jaevner.Core
         {
             SyncSettings settings = GetSettingsFromJson(json);
 
-            if (settings.DaysToKeep == 0)
+            if (args.Length > 1)
             {
-                if (args.Length > 1)
-                {
-                    int days;
-                    bool success = int.TryParse(args[1], out days);
+                int days;
+                bool success = int.TryParse(args[1], out days);
 
-                    settings.DaysToKeep = success ? days : DefaultDaysToKeep;
-                }
-                else
-                {
-                    settings.DaysToKeep = DefaultDaysToKeep;
-                }
+                settings.DaysToKeep = success ? days : DefaultDaysToKeep;
             }
 
             return settings;
@@ -31,15 +23,8 @@ namespace Jaevner.Core
 
         private SyncSettings GetSettingsFromJson(string json)
         {
-            try
-            {
-                SyncSettings settings = JsonConvert.DeserializeObject<SyncSettings>(json);
-                return settings;
-            }
-            catch (Exception)
-            {
-                return new SyncSettings();
-            }
+            SyncSettings settings = JsonConvert.DeserializeObject<SyncSettings>(json);
+            return settings;
         }
 
         public string GetCalendarFile(string[] args)

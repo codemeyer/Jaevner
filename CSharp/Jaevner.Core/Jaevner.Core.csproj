@@ -56,12 +56,12 @@
   <ItemGroup>
     <Compile Include="EntryConverter.cs" />
     <Compile Include="JaevnerEntry.cs" />
-    <Compile Include="CalendarRepository.cs" />
+    <Compile Include="Repository\CalendarRepository.cs" />
     <Compile Include="CsvParser.cs" />
-    <Compile Include="ICalendarRepository.cs" />
+    <Compile Include="Repository\ICalendarRepository.cs" />
     <Compile Include="ISyncSettings.cs" />
-    <Compile Include="JaevnerEventArgs.cs" />
-    <Compile Include="JaevnerExceptionEventArgs.cs" />
+    <Compile Include="Events\JaevnerEventArgs.cs" />
+    <Compile Include="Events\JaevnerExceptionEventArgs.cs" />
     <Compile Include="JaevnerRunner.cs" />
     <Compile Include="JaevnerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

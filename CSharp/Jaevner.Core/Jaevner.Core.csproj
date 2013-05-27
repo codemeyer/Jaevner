@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntryConverter.cs" />
+    <Compile Include="FileSystem\FileSystem.cs" />
+    <Compile Include="FileSystem\IFileSystem.cs" />
     <Compile Include="JaevnerEntry.cs" />
     <Compile Include="Repository\CalendarRepository.cs" />
     <Compile Include="CsvParser.cs" />

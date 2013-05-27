@@ -12,7 +12,9 @@ namespace Jaevner.Core
 
             string path = settingsParser.GetCalendarFile(args);
 
-            if (!File.Exists(path))
+            var fileSystem = new FileSystem();
+
+            if (!fileSystem.FileExists(path))
             {
                 throw new FileNotFoundException("Cannot find specified calendar file", path);
             }
@@ -21,7 +23,7 @@ namespace Jaevner.Core
             string jsonFile = Path.Combine(exePath, "Settings.json");
 
             string json = "{}";
-            if (File.Exists(jsonFile))
+            if (fileSystem.FileExists(jsonFile))
             {
                 json = File.ReadAllText(jsonFile);
             }

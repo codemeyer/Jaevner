@@ -49,7 +49,7 @@ The other settings are specified in the settings.json file. They are the URL to 
 ## Known issues
 
 * Some exported event descriptions are missing some blankspaces
-* Some encoding issues
+* Old events are sometimes not deleted
 
 
 ## To-do

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace Jaevner.Core
 {
@@ -11,7 +12,7 @@ namespace Jaevner.Core
 
         public string ReadAllText(string path)
         {
-            return File.ReadAllText(path);
+            return File.ReadAllText(path, Encoding.Default);
         }
     }
 }

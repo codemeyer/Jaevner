@@ -50,7 +50,8 @@ namespace Jaevner.Core
 
         private void ProcessFile(string path, JaevnerService service)
         {
-            string data = File.ReadAllText(path);
+            var fileSystem = new FileSystem();
+            string data = fileSystem.ReadAllText(path);
             var parser = new CsvParser();
 
             List<JaevnerEntry> entries = parser.Parse(data);

@@ -35,8 +35,8 @@ namespace Jaevner.Core
             service.EntryAction += ServiceOnEntryAction;
             service.EntryException += ServiceOnEntryException;
 
-            ProcessFile(path, service);
-
+            ProcessFile(path, service, syncSettings.DaysToKeep);
+            
             Console.WriteLine("Finished!");
         }
 
@@ -48,7 +48,7 @@ namespace Jaevner.Core
             return service;
         }
 
-        private void ProcessFile(string path, JaevnerService service)
+        private void ProcessFile(string path, JaevnerService service, int daysToKeep)
         {
             var fileSystem = new FileSystem();
             string data = fileSystem.ReadAllText(path);
@@ -59,6 +59,7 @@ namespace Jaevner.Core
             Console.WriteLine("Found {0} entries in {1}", entries.Count, Path.GetFileName(path));
 
             service.ProcessEntries(entries);
+            service.RemoveIrrelevantEntries(entries, daysToKeep);
         }
 
         private void ServiceOnEntryAction(object sender, JaevnerEventArgs args)
@@ -69,7 +70,7 @@ namespace Jaevner.Core
 
         private void ServiceOnEntryException(object sender, JaevnerExceptionEventArgs args)
         {
-            string msg = string.Format("Exception for {0} entry {1} on {2}: {3}", args.Action, args.Entry.Title, args.Entry.StartDateTime.ToString("yyyy-MM-dd HH:mm"), args.Exception.Message);
+            string msg = string.Format("Exception for {0} entry {1} on {2}: {3}", args.Action, args.Entry.Title, args.Entry.StartDateTime.ToString("yyyy-MM-dd HH:mm"), args.Exception);
             Console.WriteLine(msg);
         }
     }

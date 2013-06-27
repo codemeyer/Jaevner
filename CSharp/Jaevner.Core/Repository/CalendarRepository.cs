@@ -98,9 +98,11 @@ namespace Jaevner.Core
         {
             CalendarService calendarService = GetCalendarService();
 
-            EventEntry eventEntry = FindByUniqueId(entry.UniqueId);
-
-            calendarService.Delete(eventEntry);
+            if (entry.UniqueId != null)
+            {
+                EventEntry eventEntry = FindByUniqueId(entry.UniqueId);
+                calendarService.Delete(eventEntry);
+            }
         }
 
         private CalendarService GetCalendarService()

@@ -19,20 +19,33 @@ namespace Jaevner.Core
 
             foreach (JaevnerEntry existing in existingEntries)
             {
+                if (existing.UniqueId == null) { continue; }
+
                 TimeSpan howLongAgo = DateTime.Now.Subtract(existing.StartDateTime);
                 if (howLongAgo.Days > daysToKeep)
                 {
-                    _repository.Remove(existing);
-                    OnEntryAction(new JaevnerEventArgs { Entry = existing, Action = EntryActionType.Removed});
+                    RemoveEntry(existing);
                 }
                 else
                 {
                     if (!entries.Any(e => e.UniqueId.Equals(existing.UniqueId)))
                     {
-                        _repository.Remove(existing);
-                        OnEntryAction(new JaevnerEventArgs { Entry = existing, Action = EntryActionType.Removed });
+                        RemoveEntry(existing);
                     }
                 }
+            }
+        }
+
+        private void RemoveEntry(JaevnerEntry entry)
+        {
+            try
+            {
+                _repository.Remove(entry);
+                OnEntryAction(new JaevnerEventArgs { Entry = entry, Action = EntryActionType.Removed });
+            }
+            catch (Exception ex)
+            {
+                OnEntryException(new JaevnerExceptionEventArgs { Entry = entry, Action = EntryActionType.Removed, Exception = ex });
             }
         }
 
@@ -56,7 +69,7 @@ namespace Jaevner.Core
             try
             {
                 _repository.Update(entry);
-                OnEntryAction(new JaevnerEventArgs {Entry = entry, Action = EntryActionType.Updated});
+                OnEntryAction(new JaevnerEventArgs { Entry = entry, Action = EntryActionType.Updated });
             }
             catch (Exception ex)
             {
@@ -73,7 +86,7 @@ namespace Jaevner.Core
             }
             catch (Exception ex)
             {
-                OnEntryException(new JaevnerExceptionEventArgs { Entry = entry, Action = EntryActionType.Inserted, Exception = ex});
+                OnEntryException(new JaevnerExceptionEventArgs { Entry = entry, Action = EntryActionType.Inserted, Exception = ex });
             }
         }
 

@@ -69,6 +69,24 @@ namespace Jaevner.Tests.Core
 
                 repository.DidNotReceive().Remove(Arg.Is<JaevnerEntry>(e => e.UniqueId.Equals(uniqueId)));
             }
+
+            [Fact]
+            public void ExistingEntryWithoutUniqueIdIsNotRemoved()
+            {
+                var repository = Substitute.For<ICalendarRepository>();
+                var entries = new List<JaevnerEntry>();
+                entries.Add(new JaevnerEntry
+                {
+                    StartDateTime = DateTime.Now.AddDays(-2)
+                });
+                repository.ListEntries().Returns(entries);
+
+                var service = new JaevnerService(repository);
+
+                service.RemoveIrrelevantEntries(entries, 10);
+
+                repository.DidNotReceive().Remove(Arg.Any<JaevnerEntry>());
+            }
         }
 
         public class ProcessEntries

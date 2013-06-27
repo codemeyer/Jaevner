@@ -1,16 +1,8 @@
-﻿using Newtonsoft.Json;
-
-namespace Jaevner.Core
+﻿namespace Jaevner.Core
 {
     public class SettingsParser
     {
         private const int DefaultDaysToKeep = 14;
-
-        public SyncSettings GetSyncSettings(string json)
-        {
-            SyncSettings settings = JsonConvert.DeserializeObject<SyncSettings>(json);
-            return settings;
-        }
 
         public string GetCalendarFile(string[] args)
         {

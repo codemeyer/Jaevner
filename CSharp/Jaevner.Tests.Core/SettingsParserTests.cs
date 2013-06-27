@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Jaevner.Core;
 using Xunit;
 
@@ -69,37 +68,6 @@ namespace Jaevner.Tests.Core
 
                 daysToKeep.Should().Be(14);
             }
-        }
-
-        public class GetSyncSettings
-        {
-            [Fact]
-            public void ReturnsAllSettingsFromJson()
-            {
-                string json =
-                    "{\"CalendarUrl\": \"http://jsonurl\", \"UserName\": \"jsonuser\",\"Password\": \"jsonpwd\"}";
-
-                var parser = new SettingsParser();
-
-                SyncSettings settings = parser.GetSyncSettings(json);
-
-                settings.CalendarUrl.Should().Be("http://jsonurl");
-                settings.UserName.Should().Be("jsonuser");
-                settings.Password.Should().Be("jsonpwd");
-            }
-
-            [Fact]
-            public void ThrowsExceptionIfJsonCannotBeDeserialized()
-            {
-                string json = "broken";
-
-                var parser = new SettingsParser();
-
-                Action action = () => parser.GetSyncSettings(json);
-
-                action.ShouldThrow<Exception>();
-            }
-
         }
     }
 }

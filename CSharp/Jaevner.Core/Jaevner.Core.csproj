@@ -54,25 +54,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalendarSettings.cs" />
+    <Compile Include="CalendarSettingsProvider.cs" />
     <Compile Include="EntryConverter.cs" />
     <Compile Include="FileSystem\FileSystem.cs" />
     <Compile Include="FileSystem\IFileSystem.cs" />
+    <Compile Include="ICalendarSettingsProvider.cs" />
+    <Compile Include="Infrastructure\ISettingsFileReader.cs" />
     <Compile Include="JaevnerEntry.cs" />
     <Compile Include="Repository\CalendarRepository.cs" />
     <Compile Include="CsvParser.cs" />
     <Compile Include="Repository\ICalendarRepository.cs" />
-    <Compile Include="ISyncSettings.cs" />
     <Compile Include="Events\JaevnerEventArgs.cs" />
     <Compile Include="Events\JaevnerExceptionEventArgs.cs" />
     <Compile Include="JaevnerRunner.cs" />
     <Compile Include="JaevnerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Infrastructure\SettingsFileReader.cs" />
     <Compile Include="SettingsParser.cs" />
-    <Compile Include="SyncSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

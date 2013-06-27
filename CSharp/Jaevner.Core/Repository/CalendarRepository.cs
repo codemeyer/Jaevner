@@ -7,11 +7,11 @@ namespace Jaevner.Core
 {
     public class CalendarRepository : ICalendarRepository
     {
-        private readonly ISyncSettings _syncSettings;
+        private readonly ICalendarSettingsProvider _settings;
 
-        public CalendarRepository(ISyncSettings syncSettings)
+        public CalendarRepository(ICalendarSettingsProvider settings)
         {
-            _syncSettings = syncSettings;
+            _settings = settings;
         }
 
         public bool EntryExists(string uniqueId)
@@ -30,7 +30,7 @@ namespace Jaevner.Core
         {
             CalendarService calendarService = GetCalendarService();
 
-            var eventQuery = new EventQuery(_syncSettings.CalendarUrl);
+            var eventQuery = new EventQuery(_settings.CalendarUrl);
             eventQuery.ExtraParameters = string.Format("extq=[{0}:{1}]", name, value);
 
             EventFeed eventFeed = calendarService.Query(eventQuery);
@@ -50,7 +50,7 @@ namespace Jaevner.Core
         {
             CalendarService calendarService = GetCalendarService();
 
-            var eventQuery = new EventQuery(_syncSettings.CalendarUrl);
+            var eventQuery = new EventQuery(_settings.CalendarUrl);
 
             EventFeed eventFeed = calendarService.Query(eventQuery);
 
@@ -77,7 +77,7 @@ namespace Jaevner.Core
 
             EventEntry eventEntry = EntryConverter.GetEventEntry(entry);
 
-            var uri = new Uri(_syncSettings.CalendarUrl);
+            var uri = new Uri(_settings.CalendarUrl);
             calendarService.Insert(uri, eventEntry);
         }
 
@@ -108,7 +108,7 @@ namespace Jaevner.Core
         private CalendarService GetCalendarService()
         {
             var calendarService = new CalendarService("JaevnerCalendar");
-            calendarService.setUserCredentials(_syncSettings.UserName, _syncSettings.Password);
+            calendarService.setUserCredentials(_settings.UserName, _settings.Password);
 
             return calendarService;
         }

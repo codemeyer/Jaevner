@@ -1,6 +1,6 @@
 ﻿namespace Jaevner.Core
 {
-    public class SyncSettings : ISyncSettings
+    public class CalendarSettings
     {
         public string CalendarUrl { get; set; }
 

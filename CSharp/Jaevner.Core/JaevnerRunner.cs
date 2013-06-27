@@ -6,61 +6,49 @@ namespace Jaevner.Core
 {
     public class JaevnerRunner
     {
+        private readonly IFileSystem _fileSystem;
+        private readonly JaevnerService _service;
+
+        public JaevnerRunner(IFileSystem fileSystem, JaevnerService service)
+        {
+            _fileSystem = fileSystem;
+            _service = service;
+        }
+
         public void Run(string[] args)
         {
             var settingsParser = new SettingsParser();
 
             string path = settingsParser.GetCalendarFile(args);
 
-            var fileSystem = new FileSystem();
-
-            if (!fileSystem.FileExists(path))
+            if (!_fileSystem.FileExists(path))
             {
                 throw new FileNotFoundException("Cannot find specified calendar file", path);
             }
 
-            string exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string jsonFile = Path.Combine(exePath, "Settings.json");
-
-            string json = "{}";
-            if (fileSystem.FileExists(jsonFile))
-            {
-                json = File.ReadAllText(jsonFile);
-            }
-
-            SyncSettings syncSettings = settingsParser.GetSyncSettings(json);
             int daysToKeep = settingsParser.GetNumberOfDaysToKeep(args);
 
-            var service = GetService(syncSettings);
+            _service.EntryAction += ServiceOnEntryAction;
+            _service.EntryException += ServiceOnEntryException;
 
-            service.EntryAction += ServiceOnEntryAction;
-            service.EntryException += ServiceOnEntryException;
+            List<JaevnerEntry> entries = ReadEntriesFromFile(path);
+            Console.WriteLine("Found {0} entries in {1}", entries.Count, Path.GetFileName(path));
 
-            ProcessFile(path, service, daysToKeep);
+            _service.ProcessEntries(entries);
+            _service.RemoveIrrelevantEntries(entries, daysToKeep);
             
             Console.WriteLine("Finished!");
         }
 
-        private JaevnerService GetService(SyncSettings syncSettings)
-        {
-            var repository = new CalendarRepository(syncSettings);
-            var service = new JaevnerService(repository);
-
-            return service;
-        }
-
-        private void ProcessFile(string path, JaevnerService service, int daysToKeep)
+        private List<JaevnerEntry> ReadEntriesFromFile(string path)
         {
             var fileSystem = new FileSystem();
             string data = fileSystem.ReadAllText(path);
+            
             var parser = new CsvParser();
-
             List<JaevnerEntry> entries = parser.Parse(data);
 
-            Console.WriteLine("Found {0} entries in {1}", entries.Count, Path.GetFileName(path));
-
-            service.ProcessEntries(entries);
-            service.RemoveIrrelevantEntries(entries, daysToKeep);
+            return entries;
         }
 
         private void ServiceOnEntryAction(object sender, JaevnerEventArgs args)

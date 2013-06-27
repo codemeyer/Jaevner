@@ -32,62 +32,70 @@ namespace Jaevner.Tests.Core
             }
         }
 
-        public class GetSyncSettings
+        public class GetNumberOfDaysToKeep
         {
             [Fact]
-            public void ReturnsAllSettingsFromJson()
+            public void ReturnsDefaultNumberOfDaysIfNoCommandLineValueIsSpecified()
             {
                 string[] args = new[] { @"C:\file.csv" };
-                string json =
-                    "{\"CalendarUrl\": \"http://jsonurl\", \"UserName\": \"jsonuser\",\"Password\": \"jsonpwd\",\"DaysToKeep\": \"10\"}";
 
                 var parser = new SettingsParser();
 
-                SyncSettings settings = parser.GetSyncSettings(args, json);
+                int daysToKeep = parser.GetNumberOfDaysToKeep(args);
 
-                settings.CalendarUrl.Should().Be("http://jsonurl");
-                settings.UserName.Should().Be("jsonuser");
-                settings.Password.Should().Be("jsonpwd");
-                settings.DaysToKeep.Should().Be(10);
+                daysToKeep.Should().Be(14);
             }
 
             [Fact]
-            public void ReturnsNumberOfDaysToKeepFromCommandLineEvenIfSpecifiedInSettings()
+            public void UsesCommandLineValueIfSpecified()
             {
                 string[] args = new[] { @"C:\file.csv", "77" };
-                string json =
-                    "{\"CalendarUrl\": \"http://jsonurl\", \"UserName\": \"jsonuser\",\"Password\": \"jsonpwd\",\"DaysToKeep\": \"5\"}";
 
                 var parser = new SettingsParser();
 
-                SyncSettings settings = parser.GetSyncSettings(args, json);
+                int daysToKeep = parser.GetNumberOfDaysToKeep(args);
 
-                settings.DaysToKeep.Should().Be(77);
+                daysToKeep.Should().Be(77);
             }
 
             [Fact]
             public void ReturnsDefaultNumberOfDaysToKeepIfCommandLineArgumentIsInvalid()
             {
                 string[] args = new[] { @"C:\file.csv", "abc" };
-                string json =
-                    "{\"CalendarUrl\": \"http://jsonurl\", \"UserName\": \"jsonuser\",\"Password\": \"jsonpwd\",\"DaysToKeep\": \"0\"}";
 
                 var parser = new SettingsParser();
 
-                SyncSettings settings = parser.GetSyncSettings(args, json);
+                int daysToKeep = parser.GetNumberOfDaysToKeep(args);
 
-                settings.DaysToKeep.Should().Be(14);
+                daysToKeep.Should().Be(14);
+            }
+        }
+
+        public class GetSyncSettings
+        {
+            [Fact]
+            public void ReturnsAllSettingsFromJson()
+            {
+                string json =
+                    "{\"CalendarUrl\": \"http://jsonurl\", \"UserName\": \"jsonuser\",\"Password\": \"jsonpwd\"}";
+
+                var parser = new SettingsParser();
+
+                SyncSettings settings = parser.GetSyncSettings(json);
+
+                settings.CalendarUrl.Should().Be("http://jsonurl");
+                settings.UserName.Should().Be("jsonuser");
+                settings.Password.Should().Be("jsonpwd");
             }
 
             [Fact]
             public void ThrowsExceptionIfJsonCannotBeDeserialized()
             {
-                string[] args = new string[] { };
                 string json = "broken";
 
                 var parser = new SettingsParser();
 
-                Action action = () => parser.GetSyncSettings(args, json);
+                Action action = () => parser.GetSyncSettings(json);
 
                 action.ShouldThrow<Exception>();
             }

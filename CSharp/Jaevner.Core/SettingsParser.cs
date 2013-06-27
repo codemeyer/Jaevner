@@ -6,22 +6,7 @@ namespace Jaevner.Core
     {
         private const int DefaultDaysToKeep = 14;
 
-        public SyncSettings GetSyncSettings(string[] args, string json)
-        {
-            SyncSettings settings = GetSettingsFromJson(json);
-
-            if (args.Length > 1)
-            {
-                int days;
-                bool success = int.TryParse(args[1], out days);
-
-                settings.DaysToKeep = success ? days : DefaultDaysToKeep;
-            }
-
-            return settings;
-        }
-
-        private SyncSettings GetSettingsFromJson(string json)
+        public SyncSettings GetSyncSettings(string json)
         {
             SyncSettings settings = JsonConvert.DeserializeObject<SyncSettings>(json);
             return settings;
@@ -37,6 +22,21 @@ namespace Jaevner.Core
             {
                 return string.Empty;
             }
+        }
+
+        public int GetNumberOfDaysToKeep(string[] args)
+        {
+            int daysToKeep = DefaultDaysToKeep;
+
+            if (args.Length > 1)
+            {
+                int days;
+                bool success = int.TryParse(args[1], out days);
+
+                daysToKeep = success ? days : DefaultDaysToKeep;
+            }
+
+            return daysToKeep;
         }
     }
 }

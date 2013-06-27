@@ -28,14 +28,15 @@ namespace Jaevner.Core
                 json = File.ReadAllText(jsonFile);
             }
 
-            SyncSettings syncSettings = settingsParser.GetSyncSettings(args, json);
+            SyncSettings syncSettings = settingsParser.GetSyncSettings(json);
+            int daysToKeep = settingsParser.GetNumberOfDaysToKeep(args);
 
             var service = GetService(syncSettings);
 
             service.EntryAction += ServiceOnEntryAction;
             service.EntryException += ServiceOnEntryException;
 
-            ProcessFile(path, service, syncSettings.DaysToKeep);
+            ProcessFile(path, service, daysToKeep);
             
             Console.WriteLine("Finished!");
         }

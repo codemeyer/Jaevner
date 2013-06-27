@@ -25,16 +25,9 @@ The constants that you can easily tweak are:
 
 ### The console application
 
-This application will be called directly from the LotusScript code with the path to the exported file as a parameter. This is the default behavior, but requires you to update the settings file for the application.
+The console application (Jaevner.exe) and the associated settings.json files should be placed in the folder specifed in EXPORT_PATH in the LotusScript code. After doing this, edit the settings.json file and enter the URL to your Google calendar, your user name and password. It is recommended that you use an application-specific password and not your master password, of course.
 
-
-### Technical stuff
-
-The C# console application uses the Google GData API to communicate with Google Calendar.
-
-The .bat file in CSharp\Build will create a single Jaevner.exe file using ILRepack. You must have compiled the project in Release mode first though.
-
-Jaevner.exe can be called with one or two command line parameters. They are:
+The application will be called directly from the LotusScript code. You can also call it yourself. It takes two parameters:
 
 * The path to the file containing calendar data
 * Number of days to keep calendar data - older calendar entries will be deleted (optional, 14 days is used if omitted)
@@ -43,7 +36,12 @@ Example:
 
     Jaevner.exe c:\temp\whatever.csv 30
 
-The other settings are specified in the settings.json file. They are the URL to the calendar, your user name and password. You can also specify the number of days to keep data.
+
+### Technical stuff
+
+The C# console application uses the Google GData API to communicate with Google Calendar.
+
+The .bat file in CSharp\Build will create a single Jaevner.exe file using ILRepack. You must have compiled the project in Release mode first though.
 
 
 ## Known issues

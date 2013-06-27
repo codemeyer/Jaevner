@@ -37,7 +37,7 @@ Sub ExportCalendar
 		End If
 		
 		Dim result As Integer
-		result = Shell(EXPORT_PATH & PROGRAM_NAME & " " & fileName, window)
+		result = Shell(EXPORT_PATH & PROGRAM_NAME & " " & fileName & " " & DAYS_TO_KEEP, window)
 	End If
 	
 	Exit Sub

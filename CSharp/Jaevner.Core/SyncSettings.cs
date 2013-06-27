@@ -2,8 +2,6 @@
 {
     public class SyncSettings : ISyncSettings
     {
-        public int DaysToKeep { get; set; }
-
         public string CalendarUrl { get; set; }
 
         public string UserName { get; set; }

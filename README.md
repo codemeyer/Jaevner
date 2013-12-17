@@ -51,13 +51,6 @@ The .bat file in CSharp\Build creates a single Jaevner.exe file using ILRepack.
 * Some exported event descriptions are missing some blankspaces
 
 
-## To-do
-
-* Move to v3 of the API
-* There should be more error handling
-* More/better documentation
-
-
 ## But what does the word Jaevner actually mean?
 
 Jaevner is the Danish word for sauce thickening.
